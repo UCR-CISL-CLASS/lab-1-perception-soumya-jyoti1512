@@ -632,23 +632,6 @@ class CameraManager(object):
         attachment = carla.AttachmentType
         self._camera_transforms = [
             (carla.Transform(carla.Location(x=-2.0*bound_x, y=+0.0*bound_y, z=2.0*bound_z), carla.Rotation(pitch=8.0)), attachment.SpringArmGhost),
-<<<<<<< HEAD
-            (carla.Transform(carla.Location(x=+0.8*bound_x, y=+0.0*bound_y, z=1.3*bound_z)), attachment.Rigid),
-            (carla.Transform(carla.Location(x=+1.9*bound_x, y=+1.0*bound_y, z=1.2*bound_z)), attachment.SpringArmGhost),
-            (carla.Transform(carla.Location(x=-2.8*bound_x, y=+0.0*bound_y, z=4.6*bound_z), carla.Rotation(pitch=6.0)), attachment.SpringArmGhost),
-            (carla.Transform(carla.Location(x=-1.0, y=-1.0*bound_y, z=0.4*bound_z)), attachment.Rigid)]
-
-        self.transform_index = 1
-        self.sensors = [
-            ['sensor.camera.rgb', cc.Raw, 'Camera RGB'],
-            ['sensor.camera.depth', cc.Raw, 'Camera Depth (Raw)'],
-            ['sensor.camera.depth', cc.Depth, 'Camera Depth (Gray Scale)'],
-            ['sensor.camera.depth', cc.LogarithmicDepth, 'Camera Depth (Logarithmic Gray Scale)'],
-            ['sensor.camera.semantic_segmentation', cc.Raw, 'Camera Semantic Segmentation (Raw)'],
-            ['sensor.camera.semantic_segmentation', cc.CityScapesPalette,
-             'Camera Semantic Segmentation (CityScapes Palette)'],
-            ['sensor.lidar.ray_cast', None, 'Lidar (Ray-Cast)']]
-=======
             # (carla.Transform(carla.Location(x=+0.8*bound_x, y=+0.0*bound_y, z=1.3*bound_z)), attachment.Rigid),
             # (carla.Transform(carla.Location(x=+1.9*bound_x, y=+1.0*bound_y, z=1.2*bound_z)), attachment.SpringArmGhost),
             # (carla.Transform(carla.Location(x=-2.8*bound_x, y=+0.0*bound_y, z=4.6*bound_z), carla.Rotation(pitch=6.0)), attachment.SpringArmGhost),
@@ -666,7 +649,6 @@ class CameraManager(object):
             #  'Camera Semantic Segmentation (CityScapes Palette)'],
             # ['sensor.lidar.ray_cast', None, 'Lidar (Ray-Cast)'],
             ]
->>>>>>> upstream/main
         world = self._parent.get_world()
         bp_library = world.get_blueprint_library()
         for item in self.sensors:
@@ -677,13 +659,6 @@ class CameraManager(object):
             elif item[0].startswith('sensor.lidar'):
                 blp.set_attribute('range', '50')
             item.append(blp)
-<<<<<<< HEAD
-        self.index = None
-
-    def toggle_camera(self):
-        """Activate a camera"""
-        self.transform_index = (self.transform_index + 1) % len(self._camera_transforms)
-=======
         self.index = None # Sensor index
 
         self.bbox_data = None # Bounding boxes
@@ -729,33 +704,21 @@ class CameraManager(object):
     def toggle_camera(self):
         """Activate a camera"""
         self.index = (self.index + 1) % len(self._camera_transforms)
->>>>>>> upstream/main
         self.set_sensor(self.index, notify=False, force_respawn=True)
 
     def set_sensor(self, index, notify=True, force_respawn=False):
         """Set a sensor"""
         index = index % len(self.sensors)
-<<<<<<< HEAD
-        needs_respawn = True if self.index is None else (
-            force_respawn or (self.sensors[index][0] != self.sensors[self.index][0]))
-=======
         needs_respawn = True if self.index is None else (force_respawn)
->>>>>>> upstream/main
         if needs_respawn:
             if self.sensor is not None:
                 self.sensor.destroy()
                 self.surface = None
             self.sensor = self._parent.get_world().spawn_actor(
                 self.sensors[index][-1],
-<<<<<<< HEAD
-                self._camera_transforms[self.transform_index][0],
-                attach_to=self._parent,
-                attachment_type=self._camera_transforms[self.transform_index][1])
-=======
                 self._camera_transforms[index][0],
                 attach_to=self._parent,
                 attachment_type=self._camera_transforms[index][1])
->>>>>>> upstream/main
 
             # We need to pass the lambda a weak reference to
             # self to avoid circular reference.
@@ -778,8 +741,6 @@ class CameraManager(object):
         """Render method"""
         if self.surface is not None:
             display.blit(self.surface, (0, 0))
-<<<<<<< HEAD
-=======
     
     def project_to_camera_pygame(self, bbox):
         """Transform bbox points from camera 3D coordinates to camera plane
@@ -857,24 +818,10 @@ class CameraManager(object):
         lidar_data = np.reshape(lidar_data, (-1, 2))
         return lidar_data
         
->>>>>>> upstream/main
 
     @staticmethod
     def _parse_image(weak_self, image):
         self = weak_self()
-<<<<<<< HEAD
-        if not self:
-            return
-        if self.sensors[self.index][0].startswith('sensor.lidar'):
-            points = np.frombuffer(image.raw_data, dtype=np.dtype('f4'))
-            points = np.reshape(points, (int(points.shape[0] / 4), 4))
-            lidar_data = np.array(points[:, :2])
-            lidar_data *= min(self.hud.dim) / 100.0
-            lidar_data += (0.5 * self.hud.dim[0], 0.5 * self.hud.dim[1])
-            lidar_data = np.fabs(lidar_data)  # pylint: disable=assignment-from-no-return
-            lidar_data = lidar_data.astype(np.int32)
-            lidar_data = np.reshape(lidar_data, (-1, 2))
-=======
 
         # Obtain bounding box coords (world)
         # First check if bbox_data exists
@@ -905,14 +852,10 @@ class CameraManager(object):
             points = np.reshape(points, (int(points.shape[0] / 4), 4))
             
             lidar_data = self.project_to_lidar_pygame(points)
->>>>>>> upstream/main
             lidar_img_size = (self.hud.dim[0], self.hud.dim[1], 3)
             lidar_img = np.zeros(lidar_img_size)
             lidar_img[tuple(lidar_data.T)] = (255, 255, 255)
             self.surface = pygame.surfarray.make_surface(lidar_img)
-<<<<<<< HEAD
-        else:
-=======
             # Draw Bbox on image
             if sensor_gt_box is not None:
                 reshape_sensor_gt_box = np.array(sensor_gt_box).reshape(-1, 3)
@@ -931,15 +874,11 @@ class CameraManager(object):
             camera_gt_boxes = self.project_to_camera_pygame(sensor_gt_box) 
             camera_det_boxes = self.project_to_camera_pygame(sensor_det_box)
 
->>>>>>> upstream/main
             image.convert(self.sensors[self.index][1])
             array = np.frombuffer(image.raw_data, dtype=np.dtype("uint8"))
             array = np.reshape(array, (image.height, image.width, 4))
             array = array[:, :, :3]
             array = array[:, :, ::-1]
-<<<<<<< HEAD
-            self.surface = pygame.surfarray.make_surface(array.swapaxes(0, 1))
-=======
 
             self.surface = pygame.surfarray.make_surface(array.swapaxes(0, 1))
             
@@ -951,7 +890,6 @@ class CameraManager(object):
             if camera_det_boxes is not None:
                 PyGameDrawing.draw_bbox_in_pygame(self.surface, camera_det_boxes, color=(255, 0, 0))  # Red for detections
 
->>>>>>> upstream/main
         if self.recording:
             image.save_to_disk('_out/%08d' % image.frame)
 
@@ -1007,11 +945,8 @@ def game_loop(args):
             agent.follow_speed_limits(True)
         elif args.agent == "Behavior":
             agent = BehaviorAgent(world.player, behavior=args.behavior)
-<<<<<<< HEAD
-=======
         
         world.camera_manager.add_sensor(agent.sensors())
->>>>>>> upstream/main
 
         # Set the agent destination
         spawn_points = world.map.get_spawn_points()
@@ -1028,23 +963,16 @@ def game_loop(args):
                 world.world.tick()
             else:
                 world.world.wait_for_tick()
-<<<<<<< HEAD
-            if controller.parse_events():
-=======
             if controller.parse_events(world):
->>>>>>> upstream/main
                 return
 
             world.tick(clock)
             world.render(display)
             pygame.display.flip()
 
-<<<<<<< HEAD
-=======
             # Get bounding boxes from agent
             world.camera_manager.update_bounding_boxes(agent.bbox)
 
->>>>>>> upstream/main
             if agent.done():
                 if args.loop:
                     agent.set_destination(random.choice(spawn_points).location)
