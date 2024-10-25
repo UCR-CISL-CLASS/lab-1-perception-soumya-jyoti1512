@@ -22,19 +22,12 @@ import re
 import sys
 import weakref
 
-<<<<<<< HEAD
-=======
-
->>>>>>> upstream/main
 try:
     import pygame
     from pygame.locals import KMOD_CTRL
     from pygame.locals import K_ESCAPE
     from pygame.locals import K_q
-<<<<<<< HEAD
-=======
     from pygame.locals import K_TAB
->>>>>>> upstream/main
 except ImportError:
     raise RuntimeError('cannot import pygame, make sure pygame package is installed')
 
@@ -71,13 +64,9 @@ from agents.navigation.basic_agent import BasicAgent  # pylint: disable=import-e
 from agents.navigation.constant_velocity_agent import ConstantVelocityAgent  # pylint: disable=import-error
 from agents.navigation.agent_wrapper import AgentWrapper  # pylint: disable=import-error
 
-<<<<<<< HEAD
-
-=======
 from utils.transform import Transform
 from utils.pygame_drawing import PyGameDrawing
 import pdb
->>>>>>> upstream/main
 # ==============================================================================
 # -- Global functions ----------------------------------------------------------
 # ==============================================================================
@@ -157,11 +146,7 @@ class World(object):
         """Restart the world"""
         # Keep same camera config if the camera manager exists.
         cam_index = self.camera_manager.index if self.camera_manager is not None else 0
-<<<<<<< HEAD
-        cam_pos_id = self.camera_manager.transform_index if self.camera_manager is not None else 0
-=======
         cam_pos_id = cam_index
->>>>>>> upstream/main
 
         # Get a random blueprint.
         blueprint_list = get_actor_blueprints(self.world, self._actor_filter, self._actor_generation)
@@ -202,11 +187,7 @@ class World(object):
         self.lane_invasion_sensor = LaneInvasionSensor(self.player, self.hud)
         self.gnss_sensor = GnssSensor(self.player)
         self.camera_manager = CameraManager(self.player, self.hud)
-<<<<<<< HEAD
-        self.camera_manager.transform_index = cam_pos_id
-=======
         # self.camera_manager.transform_index = cam_pos_id
->>>>>>> upstream/main
         self.camera_manager.set_sensor(cam_index, notify=False)
         actor_type = get_actor_display_name(self.player)
         self.hud.notification(actor_type)
@@ -265,22 +246,15 @@ class KeyboardControl(object):
     def __init__(self, world):
         world.hud.notification("Press 'H' or '?' for help.", seconds=4.0)
 
-<<<<<<< HEAD
-    def parse_events(self):
-=======
     def parse_events(self, world):
->>>>>>> upstream/main
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return True
             if event.type == pygame.KEYUP:
                 if self._is_quit_shortcut(event.key):
                     return True
-<<<<<<< HEAD
-=======
                 elif event.key == K_TAB:
                     world.camera_manager.toggle_camera()
->>>>>>> upstream/main
 
     @staticmethod
     def _is_quit_shortcut(key):
